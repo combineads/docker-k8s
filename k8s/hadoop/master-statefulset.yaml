@@ -1,0 +1,103 @@
+# A headless service to create DNS records
+apiVersion: v1
+kind: Service
+metadata:
+  name: hadoop-master-svc
+  namespace: hadoop-cluster
+  labels:
+    component: hadoop-master-svc
+spec:
+  ports:
+  - name: yarn-web
+    port: 8088
+  - name: hdfs
+    port: 9000
+  # *.hadoop-master.hadoop-cluster.svc.cluster.local
+  clusterIP: None
+  selector:
+    component: hadoop-master
+---
+
+
+# Service to access the yarn web ui
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: yarn-ui-svc
+#   namespace: hadoop-cluster
+#   labels:
+#     component: yarn-ui-svc
+# spec:
+#   ports:
+#   - port: 8088
+#     name: web
+#   selector:
+#     component: hadoop-master
+# ---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: hadoop-master
+spec:
+  serviceName: hadoop-master-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: hadoop-master
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: hadoop-master
+        image: lizhiyong2000/hadoop:2.8.3
+        ports:
+        - containerPort: 8088
+          name: yarn-web
+        - containerPort: 9000
+          name: hdfs
+        # command:
+           # - "/bin/bash"
+           # - "/tmp/hadoop-config/bootstrap.sh"
+           # - "-d"
+        resources:
+          requests:
+            memory: "2048Mi"
+            cpu: "100m"
+          limits:
+            memory: "2048Mi"
+            cpu: "2000m"
+        env:
+          - name: NODE_TYPE
+            value: hadoop-master
+        volumeMounts:
+          - name: hadoop-master-data
+            mountPath: /opt/hadoop/data
+          - name: hadoop-master-logs
+            mountPath: /opt/hadoop/logs
+        livenessProbe:
+          tcpSocket:
+            port: hdfs
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: hdfs
+          initialDelaySeconds: 60
+          periodSeconds: 10
+  volumeClaimTemplates:
+  - metadata:
+      name: hadoop-master-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
+      storageClassName: nfs-storage
+  - metadata:
+      name: hadoop-master-logs
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Mi
+      storageClassName: nfs-storage

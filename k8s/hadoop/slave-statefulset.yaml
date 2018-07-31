@@ -1,0 +1,87 @@
+# A headless service to create DNS records
+apiVersion: v1
+kind: Service
+metadata:
+  name: hadoop-slave-svc
+  namespace: hadoop-cluster
+  labels:
+    component: hadoop-slave-svc
+spec:
+  ports:
+  - port: 8088
+    name: web
+  - port: 8082
+    name: web2
+  # *.hadoop-slave.hadoop-cluster.svc.cluster.local
+  clusterIP: None
+  selector:
+    component: hadoop-slave
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: hadoop-slave
+spec:
+  serviceName: hadoop-slave-svc
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        component: hadoop-slave
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: hadoop-slave
+        image: lizhiyong2000/hadoop:2.8.3
+        ports:
+        - containerPort: 8088
+          name: web
+        command:
+           # - "/bin/bash"
+           # - "/tmp/hadoop-data/bootstrap.sh"
+           # - "-d"
+        resources:
+          requests:
+            memory: "1024Mi"
+            cpu: "100m"
+          limits:
+            memory: "2048Mi"
+            cpu: "4000m"
+        env:
+          - name: NODE_TYPE
+            value: hadoop-slave
+          - name: MY_CPU_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                containerName: hadoop-slave
+                resource: limits.cpu
+                divisor: 1
+          - name: MY_MEM_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                containerName: hadoop-slave
+                resource: limits.memory
+                divisor: 1M
+        volumeMounts:
+          - name: hadoop-slave-data
+            mountPath: /opt/hadoop/data
+          - name: hadoop-slave-logs
+            mountPath: /opt/hadoop/logs
+  volumeClaimTemplates:
+  - metadata:
+      name: hadoop-slave-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
+      storageClassName: nfs-storage
+  - metadata:
+      name: hadoop-slave-logs
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Mi
+      storageClassName: nfs-storage
+  
