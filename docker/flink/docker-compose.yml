@@ -19,21 +19,23 @@
 version: "2"
 services:
   flink-jobmanager:
-    image: melentye/flink:latest
+    image: lizhiyong2000/flink:1.5.1
     ports:
       - "8081:8081"
     expose:
       - "6123"
-    command: jobmanager
+      - "50101"
+    command: "jobmanager blob.server.port=50101"
 
   flink-taskmanager:
-    image: melentye/flink:latest
+    image: lizhiyong2000/flink:1.5.1
     expose:
       - "6121"
       - "6122"
+      - "50101"
     depends_on:
       - flink-jobmanager
     links:
       - flink-jobmanager
-    command: taskmanager
+    command: "taskmanager blob.server.port=50101"
 

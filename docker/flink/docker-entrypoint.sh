@@ -19,6 +19,8 @@
 ################################################################################
 
 # jobmanager or taskmanager
+
+echo $@
 FLINK_COMPONENT=$1
 shift
 
@@ -43,6 +45,8 @@ function setup_config {
 # Set default config values
 set_config_property "jobmanager.rpc.address" "flink-jobmanager"
 
+echo $@
+
 if [ "$FLINK_COMPONENT" = "jobmanager" ]; then
     # Override config params form command line arguments
     setup_config "$@"
@@ -59,10 +63,10 @@ else
     $@
 fi
 
-# if [[ $1 == "-d" ]]; then
-  # while true; do sleep 1000; done
-# fi
 
-# if [[ $1 == "-bash" ]]; then
-#   /bin/bash
-# fi
+while true; do sleep 1000; done
+
+
+if [[ $1 == "-bash" ]]; then
+  /bin/bash
+fi
