@@ -19,7 +19,7 @@ spec:
           # image: quay.io/external_storage/nfs-client-provisioner:v2.0.1
           volumeMounts:
             - name: nfs-client-root
-              mountPath: /opt/data/k8s
+              mountPath: /persistentvolumes
           env:
             - name: PROVISIONER_NAME
               value: nfs-client-provisioner
