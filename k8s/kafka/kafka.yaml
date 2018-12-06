@@ -1,19 +1,52 @@
+# A headless service to create DNS records
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-svc
-  labels:
-    app: kafka-svc
+  name: broker
 spec:
-
-  type: NodePort
   ports:
   - port: 9092
-    targetPort: 9092
-    nodePort: 30992
+  # [podname].broker.kafka.svc.cluster.local
+  clusterIP: None
   selector:
     app: kafka
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-0
+spec:
+  type: NodePort
+  ports:
+  - port: 9093
+    nodePort: 30093
+  selector:
+    kafka-set-component: kafka-0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-1
+spec:
+  type: NodePort
+  ports:
+  - port: 9093
+    nodePort: 30094
+  selector:
+    kafka-set-component: kafka-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-2
+spec:
+  type: NodePort
+  ports:
+  - port: 9093
+    nodePort: 30095
+  selector:
+    kafka-set-component: kafka-2
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -37,7 +70,7 @@ kind: StatefulSet
 metadata:
   name: kafka
 spec:
-  serviceName: kafka-svc
+  serviceName: broker
   replicas: 3
   template:
     metadata:
@@ -65,6 +98,8 @@ spec:
         ports:
         - containerPort: 9092
           name: client
+        - containerPort: 9093
+          name: client-ex
         env:
         - name : ZOO_REPLICAS
           value: "3"
@@ -76,6 +111,14 @@ spec:
           value: "PLAINTEXT://:9092"
         # - name: KAFKA_ADVERTISED_LISTENERS
         #   value: "PLAINTEXT://192.168.2.42:9092"
+        - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+          value: "INTERNAL_PLAINTEXT:PLAINTEXT,EXTERNAL_PLAINTEXT:PLAINTEXT"
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: "INTERNAL_PLAINTEXT://127.0.0.1:9092,EXTERNAL_PLAINTEXT://192.168.2.42:9093"
+        - name: KAFKA_LISTENERS
+          value: "INTERNAL_PLAINTEXT://0.0.0.0:9092,EXTERNAL_PLAINTEXT://0.0.0.0:9093"
+        - name: KAFKA_INTER_BROKER_LISTENER_NAME
+          value: "INTERNAL_PLAINTEXT"
         - name: KAFKA_DELETE_TOPIC_ENABLE
           value: "true"
         - name: KAFKA_SOCKET_REQUEST_MAX_BYTES

@@ -223,6 +223,14 @@ function create_config(){
         fi
     done
 
+    EXTERNAL_LISTENER_PORT=$((30093 + ${HOSTNAME##*-}))
+
+    echo "EXTERNAL_LISTENER_PORT=$EXTERNAL_LISTENER_PORT"
+
+    # sed -i "s/#listeners=PLAINTEXT:\/\/:9092/listeners=INTERNAL_PLAINTEXT:\/\/0.0.0.0:9092,EXTERNAL_PLAINTEXT:\/\/0.0.0.0:9093/" /etc/kafka/server.properties
+    sed -i "s/127.0.0.1:9092/${HOSTNAME}.broker.default.svc.cluster.local:9092/" "${KAFKA_HOME}/config/server.properties"
+    sed -i "s/192.168.2.42:9093/192.168.2.42:${EXTERNAL_LISTENER_PORT}/" "${KAFKA_HOME}/config/server.properties"
+
     cat "$KAFKA_HOME/config/server.properties"
 
 }

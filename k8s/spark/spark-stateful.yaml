@@ -39,7 +39,7 @@ spec:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: spark-master-controller
+  name: spark-master
 spec:
   replicas: 1
   selector:
@@ -60,20 +60,20 @@ spec:
           resources:
             requests:
               cpu: 100m
-      #     volumeMounts:
-      #     - name: data
-      #       mountPath: /tmp
-      # volumes:
-      # - name: data
-      #   persistentVolumeClaim:
-      #     claimName: spark-data-pvc
+          volumeMounts:
+          - name: data
+            mountPath: /tmp
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: spark-data-pvc
 
 
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: spark-worker-controller
+  name: spark-worker
 spec:
   replicas: 1
   selector:
