@@ -1,7 +1,7 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: redis-conf
+  name: redis-
 data:
   # example of a simple property defined using --from-literal
   # example.property.1: hello
@@ -32,6 +32,25 @@ spec:
     app: redis
     appCluster: redis-cluster
 ---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-nodeport
+  labels:
+    app: redis
+spec:
+  type: NodePort
+  ports:
+  - name: redis-port
+    port: 6379
+    nodePort: 30379
+  selector:
+    app: redis
+    appCluster: redis-cluster
+---
+
+
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
