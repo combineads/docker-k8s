@@ -6,14 +6,29 @@ metadata:
   labels:
     component: es-data-svc
 spec:
+  ports:
+  - port: 9200
+    name: client
+    targetPort: 9200
+  - port: 9300
+    name: transport
+  selector:
+    component: elasticsearch
+    role: data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: es-data-svc-nodeport
+  labels:
+    component: es-data-svc-nodeport
+spec:
   type: NodePort
   ports:
   - port: 9200
     name: client
     targetPort: 9200
     nodePort: 30920
-  - port: 9300
-    name: transport
   selector:
     component: elasticsearch
     role: data
