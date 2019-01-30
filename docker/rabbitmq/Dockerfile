@@ -16,12 +16,6 @@ RUN set -eux \
     && echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config 
 
 
-# # add a symlink to the .erlang.cookie in /root so we can "docker exec rabbitmqctl ..." without gosu
-# RUN ln -sf /var/lib/rabbitmq/.erlang.cookie /root/
-
-# RUN ln -sf "/usr/lib/rabbitmq/lib/rabbitmq_server-$RABBITMQ_VERSION/plugins" /plugins
-
-
 # Define mount points.
 VOLUME ["/etc/rabbitmq", "/var/lib/rabbitmq/mnesia"]
 
