@@ -28,8 +28,9 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 RUN chmod a+x /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 8080
+EXPOSE 8080 8440 8441 5432 5005
 
+ENV buildNumber=2.7.3.0
 # # ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 

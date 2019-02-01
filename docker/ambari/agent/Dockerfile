@@ -27,6 +27,8 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 RUN chmod a+x /usr/local/bin/docker-entrypoint.sh
 
+ENV buildNumber=2.7.3.0
+
 # # ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
