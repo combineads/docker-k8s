@@ -65,23 +65,23 @@ config_remote_jdbc() {
 silent_security_setup() {
 
   cp /usr/sbin/ambari-server.py /usr/sbin/ambari-server_backup.py
-  cp /usr/lib/python2.6/site-packages/ambari_server/setupSecurity.py /usr/lib/python2.6/site-packages/ambari_server/setupSecurity_backup.py
-  sed -i '/^.*choice = get_validated_string_input/ s/.*/  choice = "2"/' /usr/sbin/ambari-server.py
+  cp /usr/lib/ambari-server/lib/ambari_server/setupSecurity.py /usr/lib/ambari-server/lib/ambari_server/setupSecurity_backup.py
+  sed -i ':begin; /^.*choice = get_validated_string_input/,/)/ { /)/! { $! { N; b begin }; }; s/.*/  choice = "2"/; };' /usr/sbin/ambari-server.py
   sed -i -e '/^.*Invalid choice/d' /usr/sbin/ambari-server.py
-  sed -i '/^.*masterKey = get_validated_string_input/ s/.*/    masterKey = "bigdata"/' /usr/lib/python2.6/site-packages/ambari_server/setupSecurity.py
-  sed -i '/^.*masterKey2 = get_validated_string_input/ s/.*/    masterKey2 = "bigdata"/' /usr/lib/python2.6/site-packages/ambari_server/setupSecurity.py
-  sed -i -e '/^.*passwordPattern, passwordDescr/d' /usr/lib/python2.6/site-packages/ambari_server/setupSecurity.py
-  sed -i '/^.*persist = / s/.*/    persist = True/' /usr/lib/python2.6/site-packages/ambari_server/setupSecurity.py
-  sed -i -e '/^.*not to persist/,+4d' /usr/lib/python2.6/site-packages/ambari_server/setupSecurity.py
+  sed -i ':begin; /^.*masterKey = get_validated_string_input/, /)/ { /)/! { $! { N; b begin }; }; s/.*/    masterKey = "bigdata"/; };' /usr/lib/ambari-server/lib/ambari_server/setupSecurity.py
+  sed -i ':begin; /^.*masterKey2 = get_validated_string_input/, /)/ { /)/! { $! { N; b begin }; }; s/.*/    masterKey2 = "bigdata"/; };' /usr/lib/ambari-server/lib/ambari_server/setupSecurity.py
+  sed -i -e '/^.*passwordPattern, passwordDescr/d' /usr/lib/ambari-server/lib/ambari_server/setupSecurity.py
+  sed -i '/^.*persist = / s/.*/    persist = True/' /usr/lib/ambari-server/lib/ambari_server/setupSecurity.py
+  sed -i -e '/^.*not to persist/,+4d' /usr/lib/ambari-server/lib/ambari_server/setupSecurity.py
   ambari-server setup-security
   mv /usr/sbin/ambari-server_backup.py /usr/sbin/ambari-server.py
-  mv /usr/lib/python2.6/site-packages/ambari_server/setupSecurity_backup.py /usr/lib/python2.6/site-packages/ambari_server/setupSecurity.py
+  mv /usr/lib/ambari-server/lib/ambari_server/setupSecurity_backup.py /usr/lib/ambari-server/lib/ambari_server/setupSecurity.py
 
 }
 
 main() {
-  [[ "$USE_CONSUL_DNS" == "true" ]] && local_nameserver
-  reorder_dns_lookup
+  # [[ "$USE_CONSUL_DNS" == "true" ]] && local_nameserver
+  # reorder_dns_lookup
   if [ ! -f "/var/ambari-init-executed" ]; then
     config_remote_jdbc
     silent_security_setup

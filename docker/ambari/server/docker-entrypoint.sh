@@ -17,16 +17,10 @@
 #  See the License for the specific language governing permissions and
 # limitations under the License.
 ################################################################################
+if [ ! -f "/var/ambari-init-executed" ]; then
+    /opt/ambari/init-server.sh
+fi    
 
-# 
+/usr/sbin/ambari-server start
 
-# if [[ $1 == "-d" ]]; then
-#   while true; do sleep 1000; done
-# fi
-
-# if [[ $1 == "-bash" ]]; then
-#   /bin/bash
-# fi
-
-echo "ambari started"
 while true; do sleep 1000; done

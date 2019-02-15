@@ -23,6 +23,17 @@ COPY dist/ambari-server_2.7.3.0-0-dist.deb $AMBARI_HOME/
 RUN dpkg -i $AMBARI_HOME/ambari-server_2.7.3.0-0-dist.deb
 
 # COPY conf/slaves conf/core-site.xml conf/hdfs-site.xml conf/mapred-site.xml conf/yarn-site.xml $AMBARI_CONF_DIR/
+
+
+ADD init/init-server.sh /opt/ambari/init-server.sh
+RUN chmod u+x /opt/ambari/init-server.sh
+
+
+# RUN apt-get update \
+#     && apt-get install --no-install-recommends -y systemd \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*
+
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 
