@@ -32,11 +32,12 @@ spec:
       name: http
       nodePort: 31080
 ---
-kind: Deployment
+kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: ambari-server
 spec:
+  serviceName: ambari-server
   replicas: 1
   selector:
     matchLabels:

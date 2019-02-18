@@ -17,5 +17,8 @@
 #  See the License for the specific language governing permissions and
 # limitations under the License.
 ################################################################################
+/opt/ambari/init-agent.sh
+
+/usr/sbin/ambari-agent start
 
 while true; do sleep 1000; done

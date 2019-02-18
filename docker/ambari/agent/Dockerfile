@@ -23,13 +23,11 @@ RUN dpkg -i $AMBARI_HOME/ambari-agent_2.7.3.0-0.deb
 
 # COPY conf/slaves conf/core-site.xml conf/hdfs-site.xml conf/mapred-site.xml conf/yarn-site.xml $AMBARI_CONF_DIR/
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-
-
 RUN chmod a+x /usr/local/bin/docker-entrypoint.sh
 
+ADD init/init-agent.sh /opt/ambari/init-agent.sh
+RUN chmod u+x /opt/ambari/init-agent.sh
+
+
 ENV buildNumber=2.7.3.0
-
-# # ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-
-# CMD ["-d"]

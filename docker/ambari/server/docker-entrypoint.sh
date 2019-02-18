@@ -21,6 +21,6 @@ if [ ! -f "/var/ambari-init-executed" ]; then
     /opt/ambari/init-server.sh
 fi    
 
-/usr/sbin/ambari-server start
+/usr/sbin/ambari-server start --debug
 
 while true; do sleep 1000; done
