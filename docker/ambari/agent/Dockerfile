@@ -1,4 +1,4 @@
-FROM lizhiyong2000/ubuntu:18.04
+FROM lizhiyong2000/ubuntu:16.04
 #MAINTAINER lizhiyong2000@gmail.com
 
 # AMBARI

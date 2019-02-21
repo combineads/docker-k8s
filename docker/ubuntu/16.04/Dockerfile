@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 #MAINTAINER Getty Images "https://github.com/gettyimages"
 
 
@@ -56,6 +56,10 @@ ENV LANG=en_US.UTF-8 \
     JAVA_MAJOR_VERSION=8 \ 
     JAVA_UPDATE_VERSION=201 \
     JAVA_BUILD_NUMBER=09
+
+
+# https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.tar.gz
+
 
 # JAVA
 ENV JAVA_HOME=/opt/jdk1.${JAVA_MAJOR_VERSION}.0_${JAVA_UPDATE_VERSION} \
